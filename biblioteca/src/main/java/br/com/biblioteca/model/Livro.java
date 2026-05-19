@@ -3,6 +3,8 @@ package br.com.biblioteca.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,28 +24,32 @@ public class Livro {
     private int anoDePublicacao;
 
     @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("livro")
     private List<Exemplar> exemplares = new ArrayList<>();
 
     public Livro() {
     }
-    public Livro(String titulo, String autor, int anoDePublicacao){
+
+    public Livro(String titulo, String autor, int anoDePublicacao) {
         this.titulo = titulo;
         this.autor = autor;
         this.anoDePublicacao = anoDePublicacao;
         this.exemplares = new ArrayList<>();
     }
 
-    public Long getCodigoLivro(){
+    public Long getCodigoLivro() {
         return codigoLivro;
     }
 
-    public String getTitulo(){
+    public String getTitulo() {
         return titulo;
     }
-    public String getAutor(){
+
+    public String getAutor() {
         return autor;
     }
-    public int getAnoDePublicacao(){
+
+    public int getAnoDePublicacao() {
         return anoDePublicacao;
     }
 
@@ -70,13 +76,13 @@ public class Livro {
     public void setExemplares(List<Exemplar> exemplares) {
         this.exemplares = exemplares;
     }
-    
-    public void adicionarExemplar(Exemplar exemplar){
+
+    public void adicionarExemplar(Exemplar exemplar) {
         exemplares.add(exemplar);
         exemplar.setLivro(this);
     }
 
-    public void mostrarLivro(){
+    public void mostrarLivro() {
         System.out.println("Código do Livro: " + codigoLivro);
         System.out.println("Título: " + titulo);
         System.out.println("Autor: " + autor);
@@ -87,5 +93,4 @@ public class Livro {
             System.out.println("- Código do Exemplar: " + exemplar.getcodigoExemplar() + ", Disponível: " + exemplar.getDisponivel());
         }
     }
-    
 }

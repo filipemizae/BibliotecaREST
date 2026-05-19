@@ -1,5 +1,7 @@
 package br.com.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,24 +20,26 @@ public class Exemplar {
 
     @ManyToOne
     @JoinColumn(name = "codigo_livro")
+    @JsonIgnoreProperties("exemplares")
     private Livro livro;
 
     public Exemplar() {
     }
+
     public Exemplar(boolean disponivel) {
         this.disponivel = disponivel;
     }
 
-    public void mostrarExemplar(){
+    public void mostrarExemplar() {
         System.out.println("Código do exemplar: " + codigoExemplar);
         System.out.println("Disponível: " + disponivel);
     }
-    
-    public Long getcodigoExemplar(){
-        return codigoExemplar; 
+
+    public Long getcodigoExemplar() {
+        return codigoExemplar;
     }
 
-    public boolean getDisponivel(){
+    public boolean getDisponivel() {
         return disponivel;
     }
 
@@ -47,13 +51,11 @@ public class Exemplar {
         this.codigoExemplar = codigoExemplar;
     }
 
-    public void setDisponivel(boolean disponivel){
+    public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
     }
 
     public void setLivro(Livro livro) {
         this.livro = livro;
     }
-
-    
 }
