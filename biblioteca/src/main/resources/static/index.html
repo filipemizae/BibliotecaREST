@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <title>Sistema de Biblioteca</title>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Momo+Signature&family=Outfit:wght@100..900&family=Quicksand:wght@300..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Stack+Sans+Headline:wght@200..700&display=swap"
+        rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<style>
+
+        *{
+    font-family: "Outfit", Arial, sans-serif;
+}
+        body {
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            color: #222;
+        }
+
+        header {
+            background-color: #cc141d;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+nav {
+    background-color: #ffffff;
+    padding: 45px 15px 65px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+nav button {
+    position: relative;
+    background-color: #ed1b2f;
+    color: white;
+    border: none;   
+    padding: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+nav button::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid #ed1b2f;
+    left: -8px;
+    top: 3px;
+    z-index: -1;
+}
+
+nav button:hover {
+    transform: translateY(-2px);
+}
+
+        main {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        header h2{
+            color: #ffffff;
+            padding-left: 10px;
+        }
+
+        h2 {
+            color: #ed1b2f;
+            padding-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: white;
+        }
+
+        th {
+            background-color: #ed1b2f;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 9px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .botoes button,
+        .acao {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-salvar {
+            background-color: #16a54b;
+            color: white;
+        }
+
+        .btn-apagar {
+            background-color: #c0392b;
+            color: white;
+        }
+
+        .btn-cancelar {
+            background-color: #777;
+            color: white;
+        }
+
+        .btn-novo {
+            background-color: #5f2600;
+            color: #ffffff;
+        }
+
+        .mensagem {
+            font-weight: bold;
+            color: #1e2a38;
+            margin-bottom: 15px;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .login-box {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .status-disponivel {
+            color: #16a54b;
+            font-weight: bold;
+        }
+
+        .status-indisponivel {
+            color: #c0392b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img title="Instituto Presbiteriano Mackenzie" alt="[Instituto Presbiteriano Mackenzie]" width="100" src="mackenzie_w.svg">
+        <h1>Sistema de Gestão de Biblioteca</h1>
+        <h2>Projeto PROGRAMAÇÃO DE SISTEMAS II - PARTE 2</h2>
+        <p>Spring Boot + REST + JPA + Frontend JavaScript</p>
+    </header>
+
+    <nav>
+        <button onclick="mostrarSecao('secaoLivros')"><span class="material-symbols-outlined">
+book
+</span>Gerenciar Livros</button>
+        <button onclick="mostrarSecao('secaoUsuarios')"><span class="material-symbols-outlined">
+groups
+</span>Gerenciar Usuários</button>
+        <button onclick="mostrarSecao('secaoLogin')">
+            <span class="material-symbols-outlined">
+person
+</span>Área do Usuário</button>
+        <button onclick="mostrarSecao('secaoEmprestimos')">
+            <span class="material-symbols-outlined">
+checkbook
+</span>Gerenciar Empréstimos</button>
+    </nav>
+
+    <main>
+
+        <!-- SEÇÃO LIVROS -->
+        <section id="secaoLivros">
+            <h2>Gerenciar Livros - Funcionário</h2>
+
+            <div id="formLivro" class="oculto">
+                <input type="hidden" id="txtCodigoLivro">
+
+                <label>Título:</label>
+                <input type="text" id="txtTituloLivro">
+
+                <label>Autor:</label>
+                <input type="text" id="txtAutorLivro">
+
+                <label>Ano de Publicação:</label>
+                <input type="number" id="txtAnoLivro">
+
+                <div class="botoes">
+                    <button class="btn-salvar" onclick="salvarLivro()">Salvar</button>
+                    <button class="btn-apagar" onclick="apagarLivro()">Apagar</button>
+                    <button class="btn-cancelar" onclick="cancelarLivro()">Cancelar</button>
+                </div>
+            </div>
+
+            <button class="btn-novo acao" onclick="novoLivro()">Novo Livro</button>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Ano</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabelaLivros"></tbody>
+            </table>
+        </section>
+
+        <!-- SEÇÃO USUÁRIOS -->
+        <section id="secaoUsuarios" class="oculto">
+            <h2>Gerenciar Usuários</h2>
+
+            <div id="formUsuario" class="oculto">
+                <input type="hidden" id="txtIdUsuario">
+
+                <label>Nome:</label>
+                <input type="text" id="txtNomeUsuario">
+
+                <label>Data de Nascimento:</label>
+                <input type="text" id="txtDataNascimentoUsuario" placeholder="dd/mm/aaaa">
+
+                <label>Telefone:</label>
+                <input type="text" id="txtTelefoneUsuario">
+
+                <div class="botoes">
+                    <button class="btn-salvar" onclick="salvarUsuario()">Salvar</button>
+                    <button class="btn-cancelar" onclick="cancelarUsuario()">Cancelar</button>
+                </div>
+            </div>
+
+            <button class="btn-novo acao" onclick="novoUsuario()">Novo Usuário</button>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Data Nascimento</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabelaUsuarios"></tbody>
+            </table>
+        </section>
+
+        <!-- SEÇÃO LOGIN -->
+        <section id="secaoLogin" class="oculto">
+            <h2>Área Logada do Usuário</h2>
+
+            <div class="login-box">
+                <label>Digite o ID do usuário:</label>
+                <input type="number" id="txtLoginUsuario">
+
+                <button class="btn-salvar acao" onclick="loginUsuario()">Entrar</button>
+            </div>
+
+            <div id="areaUsuarioLogado" class="oculto">
+                <h3 id="tituloUsuarioLogado"></h3>
+
+                <h3>Empréstimos Ativos</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código Empréstimo</th>
+                            <th>Exemplar</th>
+                            <th>Data Empréstimo</th>
+                            <th>Previsão Devolução</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabelaEmprestimosUsuario"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SEÇÃO EMPRÉSTIMOS -->
+        <section id="secaoEmprestimos" class="oculto">
+            <h2>Gerenciar Empréstimos</h2>
+
+            <label>ID do Usuário:</label>
+            <input type="number" id="txtEmprestimoUsuario">
+
+            <label>Código do Exemplar:</label>
+            <input type="number" id="txtEmprestimoExemplar">
+
+            <label>Data do Empréstimo:</label>
+            <input type="date" id="txtDataEmprestimo">
+
+            <button class="btn-salvar acao" onclick="registrarEmprestimo()">Registrar Empréstimo</button>
+
+            <h3>Todos os Empréstimos</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Usuário</th>
+                        <th>Exemplar</th>
+                        <th>Data Empréstimo</th>
+                        <th>Data Prevista</th>
+                        <th>Data Devolvida</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabelaEmprestimos"></tbody>
+            </table>
+        </section>
+
+    </main>
+
+</body>
+
+</html>
