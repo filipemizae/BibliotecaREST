@@ -1,14 +1,22 @@
 package br.com.biblioteca.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.biblioteca.model.Exemplar;
 import br.com.biblioteca.model.Livro;
 import br.com.biblioteca.repository.ExemplarRepository;
 import br.com.biblioteca.repository.LivroRepository;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/exemplares")
@@ -28,9 +36,9 @@ public class ExemplarController {
         return exemplarRepo.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Exemplar> buscarPorId(@PathVariable Long id) {
-        return exemplarRepo.findById(id)
+    @GetMapping("/{codigoExemplar}")
+    public ResponseEntity<Exemplar> buscarPorId(@PathVariable Long codigoExemplar) {
+        return exemplarRepo.findById(codigoExemplar)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -38,55 +46,53 @@ public class ExemplarController {
     @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody ExemplarRequest req) {
 
-        if (exemplarRepo.existsByCodigo(req.codigo())) {
-            return ResponseEntity.badRequest().body("Já existe exemplar com esse código.");
-        }
-
-        Livro livro = livroRepo.findById(req.livroId()).orElse(null);
+        Livro livro = livroRepo.findById(req.codigoLivro()).orElse(null);
 
         if (livro == null) {
             return ResponseEntity.badRequest().body("Livro não encontrado.");
         }
 
-        Exemplar exemplar = new Exemplar(req.codigo(), true, livro);
+        Exemplar exemplar = new Exemplar(true);
+        exemplar.setLivro(livro);
 
         return ResponseEntity.ok(exemplarRepo.save(exemplar));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody ExemplarRequest req) {
+    @PutMapping("/{codigoExemplar}")
+    public ResponseEntity<?> atualizar(
+            @PathVariable Long codigoExemplar,
+            @RequestBody ExemplarRequest req) {
 
-        Exemplar exemplar = exemplarRepo.findById(id).orElse(null);
+        Exemplar exemplar = exemplarRepo.findById(codigoExemplar).orElse(null);
 
         if (exemplar == null) {
             return ResponseEntity.notFound().build();
         }
 
-        Livro livro = livroRepo.findById(req.livroId()).orElse(null);
+        Livro livro = livroRepo.findById(req.codigoLivro()).orElse(null);
 
         if (livro == null) {
             return ResponseEntity.badRequest().body("Livro não encontrado.");
         }
 
-        exemplar.setCodigo(req.codigo());
         exemplar.setDisponivel(req.disponivel());
         exemplar.setLivro(livro);
 
         return ResponseEntity.ok(exemplarRepo.save(exemplar));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> apagar(@PathVariable Long id) {
+    @DeleteMapping("/{codigoExemplar}")
+    public ResponseEntity<Void> apagar(@PathVariable Long codigoExemplar) {
 
-        if (!exemplarRepo.existsById(id)) {
+        if (!exemplarRepo.existsById(codigoExemplar)) {
             return ResponseEntity.notFound().build();
         }
 
-        exemplarRepo.deleteById(id);
+        exemplarRepo.deleteById(codigoExemplar);
 
         return ResponseEntity.noContent().build();
     }
 
-    record ExemplarRequest(int codigo, boolean disponivel, Long livroId) {
+    record ExemplarRequest(boolean disponivel, Long codigoLivro) {
     }
 }

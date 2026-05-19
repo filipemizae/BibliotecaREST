@@ -1,17 +1,25 @@
 package br.com.biblioteca.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.biblioteca.model.Emprestimo;
 import br.com.biblioteca.model.Exemplar;
 import br.com.biblioteca.model.Usuario;
 import br.com.biblioteca.repository.EmprestimoRepository;
 import br.com.biblioteca.repository.ExemplarRepository;
 import br.com.biblioteca.repository.UsuarioRepository;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/emprestimos")
@@ -58,13 +66,13 @@ public class EmprestimoController {
     @PostMapping
     public ResponseEntity<?> registrarEmprestimo(@RequestBody EmprestimoRequest req) {
 
-        Exemplar exemplar = exemplarRepo.findByCodigo(req.codigoExemplar()).orElse(null);
+        Exemplar exemplar = exemplarRepo.findById(req.codigoExemplar()).orElse(null);
 
         if (exemplar == null) {
             return ResponseEntity.badRequest().body("Exemplar não encontrado.");
         }
 
-        if (!exemplar.isDisponivel()) {
+        if (!exemplar.getDisponivel()){
             return ResponseEntity.badRequest().body("Este exemplar não está disponível.");
         }
 
@@ -124,6 +132,6 @@ public class EmprestimoController {
         return ResponseEntity.ok(emprestimoRepo.save(emprestimo));
     }
 
-    record EmprestimoRequest(int codigoExemplar, int registroUsuario) {
-    }
+    record EmprestimoRequest(Long codigoExemplar, int registroUsuario) {
+}
 }

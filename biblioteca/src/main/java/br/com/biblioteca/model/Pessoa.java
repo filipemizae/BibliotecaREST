@@ -37,6 +37,10 @@ public class Pessoa {
         this.telefone = telefone;
     }
 
+    public void setDataNascimento(String dataNascimento) {
+    this.dataNascimento = dataNascimento;
+    }
+
     @Override
     public String toString() {
         return "Nome: " + nome + "  Data de nascimento: " + dataNascimento + "  Telefone: " + telefone;

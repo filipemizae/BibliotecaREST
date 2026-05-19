@@ -1,12 +1,20 @@
 package br.com.biblioteca.controller;
 
-import br.com.biblioteca.model.Usuario;
-import br.com.biblioteca.repository.UsuarioRepository;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import br.com.biblioteca.model.Usuario;
+import br.com.biblioteca.repository.UsuarioRepository;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -27,8 +35,8 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
         return repo.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -46,9 +54,15 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("Registro inválido.");
         }
 
-        if (repo.findByRegistro(usuario.getRegistro()).isPresent()) {
-            return ResponseEntity.badRequest().body("Já existe usuário com esse registro.");
+        if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
+            return ResponseEntity.badRequest().body("Senha é obrigatória.");
         }
+
+        if (repo.findByRegistro(usuario.getRegistro()).isPresent()) {
+            return ResponseEntity.badRequest().body("Já existe um usuário com esse registro!");
+        }
+
+        usuario.setRegistro(usuario.getRegistro());
 
         return ResponseEntity.ok(repo.save(usuario));
     }
@@ -74,6 +88,10 @@ public class UsuarioController {
         usuario.setDataNascimento(dados.getDataNascimento());
         usuario.setTelefone(dados.getTelefone());
 
+        if (dados.getSenha() != null && !dados.getSenha().isBlank()) {
+            usuario.setSenha(dados.getSenha());
+        }
+
         return ResponseEntity.ok(repo.save(usuario));
     }
 
@@ -92,10 +110,17 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
 
-        return repo.findByRegistro(req.registro())
-                .filter(usuario -> usuario.getSenha().equals(req.senha()))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(401).body("Registro ou senha inválidos."));
+        Usuario usuario = repo.findByRegistro(req.registro()).orElse(null);
+
+        if (usuario == null) {
+            return ResponseEntity.status(401).body("Registro ou senha inválidos.");
+        }
+
+        if (usuario.getSenha() == null || !usuario.getSenha().equals(req.senha())) {
+            return ResponseEntity.status(401).body("Registro ou senha inválidos.");
+        }
+
+        return ResponseEntity.ok(usuario);
     }
 
     record LoginRequest(int registro, String senha) {

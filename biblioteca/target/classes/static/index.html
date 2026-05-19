@@ -65,6 +65,10 @@ nav button:hover {
     transform: translateY(-2px);
 }
 
+input{
+    outline: none;
+}
+
         main {
             width: 90%;
             max-width: 1100px;
@@ -134,18 +138,21 @@ nav button:hover {
         }
 
         .btn-salvar {
-            background-color: #16a54b;
+            background-color: #007cc4;
             color: white;
+            margin-bottom: 20px;
         }
 
         .btn-apagar {
             background-color: #c0392b;
             color: white;
+            margin-bottom: 20px;
         }
 
         .btn-cancelar {
             background-color: #777;
             color: white;
+            margin-bottom: 20px;
         }
 
         .btn-novo {
@@ -263,6 +270,12 @@ checkbook
                 <label>Telefone:</label>
                 <input type="text" id="txtTelefoneUsuario">
 
+                <label>Registro:</label>
+                <input type="number" id="txtRegistroUsuario">
+
+                <label>Senha:</label>
+                <input type="password" id="txtSenhaUsuario">
+
                 <div class="botoes">
                     <button class="btn-salvar" onclick="salvarUsuario()">Salvar</button>
                     <button class="btn-cancelar" onclick="cancelarUsuario()">Cancelar</button>
@@ -290,8 +303,11 @@ checkbook
             <h2>Área Logada do Usuário</h2>
 
             <div class="login-box">
-                <label>Digite o ID do usuário:</label>
+                <label>Digite o registro do usuário:</label>
                 <input type="number" id="txtLoginUsuario">
+
+                <label>Digite a senha:</label>
+                <input type="password" id="txtLoginSenha">
 
                 <button class="btn-salvar acao" onclick="loginUsuario()">Entrar</button>
             </div>
@@ -351,6 +367,7 @@ checkbook
 
     </main>
 
+<script src="rest.js"></script>
 </body>
 
 </html>
